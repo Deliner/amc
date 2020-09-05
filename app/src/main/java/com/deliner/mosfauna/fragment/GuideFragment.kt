@@ -2,16 +2,23 @@ package com.deliner.mosfauna.fragment
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.deliner.mosfauna.R
+import com.deliner.mosfauna.dialog.CommonDialogFragment
+import com.deliner.mosfauna.dialog.DialogTags
+import com.deliner.mosfauna.dialog.PlaceMarkerDialog
+import com.deliner.mosfauna.system.CoreConst
 import com.deliner.mosfauna.utils.Bird
 import com.deliner.mosfauna.utils.MultiDrawable
+import com.deliner.mosfauna.utils.StaticHandler
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.clustering.Cluster
@@ -21,7 +28,8 @@ import com.google.maps.android.ui.IconGenerator
 import java.util.*
 
 
-class GuideFragment : CommonFragment(), OnMapReadyCallback, ClusterManager.OnClusterClickListener<Bird>,
+class GuideFragment : CommonFragment(), OnMapReadyCallback,
+    ClusterManager.OnClusterClickListener<Bird>,
     ClusterManager.OnClusterInfoWindowClickListener<Bird>,
     ClusterManager.OnClusterItemClickListener<Bird>,
     ClusterManager.OnClusterItemInfoWindowClickListener<Bird> {
@@ -32,6 +40,7 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback, ClusterManager.OnClu
     private var mClusterManager: ClusterManager<Bird>? = null
 
     private var currentBirb: Bird? = null
+    private var clickPos: LatLng? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,10 +66,12 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback, ClusterManager.OnClu
 
     override fun onResume() {
         super.onResume()
+        handler.setCallback(this)
         mMapView!!.onResume()
     }
 
     override fun onPause() {
+        handler.dropCallback(this)
         super.onPause()
         mMapView!!.onPause()
     }
@@ -88,11 +99,10 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback, ClusterManager.OnClu
         googleMap!!.setOnMarkerClickListener(mClusterManager)
         googleMap!!.setOnInfoWindowClickListener(mClusterManager)
         googleMap!!.setOnMapClickListener {
-            if (currentBirb != null){
-
-//                show
-
-                Toast.makeText(context, "ground", Toast.LENGTH_SHORT).show()
+            if (currentBirb != null) {
+                clickPos = it
+                showDialogEx(DialogTags.PLACE_MARKER, bundleOf("KEY_NAME" to currentBirb!!.name))
+//                Toast.makeText(context, "ground", Toast.LENGTH_SHORT).show()
             }
         }
         mClusterManager!!.setOnClusterClickListener(this)
@@ -101,6 +111,27 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback, ClusterManager.OnClu
         mClusterManager!!.setOnClusterItemInfoWindowClickListener(this)
         addItems()
         mClusterManager!!.cluster()
+    }
+
+
+    override fun handleServiceMessage(msg: Message) {
+        when (msg.what) {
+            CoreConst.ON_SEND_MARKER -> sendMarker(currentBirb!!, clickPos!!)
+            else -> super.handleServiceMessage(msg)
+        }
+    }
+
+    private fun sendMarker(currentBird: Bird, clickPos: LatLng) {
+
+    }
+
+
+    override fun onCreateDialogEx(tag: String, args: Bundle?): CommonDialogFragment {
+        return when (tag) {
+            DialogTags.PLACE_MARKER -> PlaceMarkerDialog.getInstance(args!!.getString("KEY_NAME")!!)
+                .setDialogResult(handler)
+            else -> super.onCreateDialogEx(tag, args)
+        }
     }
 
     override fun onClusterClick(cluster: Cluster<Bird>): Boolean {
@@ -122,6 +153,7 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback, ClusterManager.OnClu
     }
 
     override fun onClusterItemClick(item: Bird): Boolean {
+        currentBirb = item
         return false
     }
 
@@ -228,5 +260,10 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback, ClusterManager.OnClu
             mImageView.setPadding(padding, padding, padding, padding)
             mIconGenerator.setContentView(mImageView)
         }
+    }
+
+
+    companion object {
+        private val handler = StaticHandler()
     }
 }

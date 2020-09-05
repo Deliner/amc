@@ -50,6 +50,10 @@
             android:name=".activity.LoginActivity"
             android:noHistory="true" />
 
+        <activity
+            android:name=".activity.BirdInfoActivity"
+            android:noHistory="true" />
+
         <activity android:name=".activity.MainActivity" />
     </application>
 </manifest>

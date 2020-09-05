@@ -81,11 +81,12 @@ class MainActivity : CommonActivity() {
             attachToSliderView(slider)
             addProfiles(
                 profile,
-                ProfileSettingDrawerItem().apply {
-                    nameText = "Выйти";
-                    iconicsIcon = GoogleMaterial.Icon.gmd_delete;
-                    identifier = 1001
-                })
+//                ProfileSettingDrawerItem().apply {
+//                    nameText = "Выйти";
+//                    iconicsIcon = GoogleMaterial.Icon.gmd_delete;
+//                    identifier = 1001
+//                }
+            )
             onAccountHeaderListener = { _, profile, _ ->
                 if (profile.identifier == 1001L) {
                     Message.obtain(handler, CoreConst.ON_LOGOUT).sendToTarget()
