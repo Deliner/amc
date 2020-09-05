@@ -31,11 +31,6 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".activity.MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
-
-
-        <activity
             android:name=".activity.StartActivity"
             android:noHistory="true">
             <intent-filter>

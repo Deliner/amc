@@ -42,6 +42,18 @@ class LoginManager private constructor(private val context: Context) {
         this.user = user
     }
 
+    fun deleteUser() {
+        val pref = context.getSharedPreferences(
+            context.getString(R.string.pref_login_manger),
+            Context.MODE_PRIVATE
+        )
+        val editor = pref.edit()
+        editor.putString(KEY_USER, null)
+        editor.apply()
+
+        user = null
+    }
+
     data class User(val login: String, val password: String, val mail: String) {
 
         override fun toString(): String {
