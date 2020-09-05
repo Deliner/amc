@@ -1,0 +1,7 @@
+<resources>
+
+    <!-- Preference keys -->
+    <string name="pref_login_manger" translatable="false">pref_login_manger</string>
+    <string name="pref_key_voice" translatable="false">pref_voice</string>
+
+</resources>

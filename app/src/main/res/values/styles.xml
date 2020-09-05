@@ -16,4 +16,18 @@
         <item name="windowActionModeOverlay">true</item>
     </style>
 
+    <style name="GreetLoginButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="cornerRadius">32dp</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="strokeColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="GreetJoinButton" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">32dp</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="backgroundTint">@color/colorPrimary</item>
+    </style>
+
 </resources>

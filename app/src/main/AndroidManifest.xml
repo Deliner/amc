@@ -31,15 +31,30 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".activity.MapsActivity"
             android:label="@string/title_activity_maps"></activity>
-        <activity android:name=".MainActivity">
+
+
+        <activity
+            android:name=".activity.StartActivity"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
 
+        <activity
+            android:name=".activity.GreetActivity"
+            android:noHistory="true" />
+        <activity
+            android:name=".activity.JoinActivity"
+            android:noHistory="true" />
+        <activity
+            android:name=".activity.LoginActivity"
+            android:noHistory="true" />
+
+        <activity android:name=".activity.MainActivity" />
+    </application>
 </manifest>
