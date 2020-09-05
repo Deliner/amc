@@ -1,5 +1,6 @@
 package com.deliner.mosfauna.fragment
 
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Message
@@ -12,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.deliner.mosfauna.R
+import com.deliner.mosfauna.activity.BirdInfoActivity
 import com.deliner.mosfauna.dialog.CommonDialogFragment
 import com.deliner.mosfauna.dialog.DialogTags
 import com.deliner.mosfauna.dialog.PlaceMarkerDialog
@@ -117,6 +119,10 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback,
     override fun handleServiceMessage(msg: Message) {
         when (msg.what) {
             CoreConst.ON_SEND_MARKER -> sendMarker(currentBirb!!, clickPos!!)
+            CoreConst.ON_CANCEL_MARKER -> {
+                currentBirb = null
+                clickPos = null
+            }
             else -> super.handleServiceMessage(msg)
         }
     }
@@ -124,7 +130,6 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback,
     private fun sendMarker(currentBird: Bird, clickPos: LatLng) {
 
     }
-
 
     override fun onCreateDialogEx(tag: String, args: Bundle?): CommonDialogFragment {
         return when (tag) {
@@ -158,8 +163,11 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback,
     }
 
     override fun onClusterItemInfoWindowClick(item: Bird) {
-        Toast.makeText(context, "info", Toast.LENGTH_SHORT).show()
-
+        val intent = Intent(activity, BirdInfoActivity::class.java)
+        intent.putExtra("KEY_BIRD", item.name)
+        intent.putExtra("KEY_PHOTO", item.photo)
+        startActivity(intent)
+//        Toast.makeText(context, "info", Toast.LENGTH_SHORT).show()
     }
 
     private fun addItems() {

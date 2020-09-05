@@ -95,8 +95,6 @@ class MainActivity : CommonActivity() {
             }
         }
 
-
-
         slider.apply {
             itemAdapter.add(
                 PrimaryDrawerItem().withIdentifier(1).withName("Гид")
