@@ -1,5 +1,6 @@
 package com.deliner.mosfauna.fragment
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import java.io.InputStream
 
 
 class GuideFragment : Fragment() {
@@ -20,7 +22,11 @@ class GuideFragment : Fragment() {
     var mMapView: MapView? = null
     private var googleMap: GoogleMap? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val rootView: View = inflater.inflate(R.layout.fragment_guide, container, false)
         mMapView = rootView.findViewById<View>(R.id.mapView) as MapView
         mMapView!!.onCreate(savedInstanceState)
@@ -31,12 +37,21 @@ class GuideFragment : Fragment() {
             e.printStackTrace()
         }
         mMapView!!.getMapAsync { mMap ->
-            val sydney = LatLng(55.6524933,37.4646361)
-            val cameraPosition = CameraPosition.Builder().target(sydney).zoom(14f).build()
+            val user = LatLng(55.799334, 37.673134)
+            val cameraPosition = CameraPosition.Builder().target(user).zoom(13f).build()
+
+
+
+            val inputStream: InputStream = requireActivity().assets.open("gog.png")
+            val bitmap = BitmapFactory.decodeStream(inputStream)
 
             googleMap = mMap
-            googleMap!!.addMarker(MarkerOptions().position(sydney).title("").snippet(""))
+            googleMap!!.addMarker(MarkerOptions().position(LatLng(55.810348, 37.663642)).title("Обыкновенный гоголь").icon(bitmap.) )
+            googleMap!!.addMarker(MarkerOptions().position(LatLng(55.799162, 37.655170)).title("Ястреб-перепелятник"))
+            googleMap!!.addMarker(MarkerOptions().position(LatLng(55.807767, 37.684719)).title("Ястреб-тетеревятник"))
+            googleMap!!.addMarker(MarkerOptions().position(LatLng(55.800969, 37.688343)).title("Серая неясыть"))
             googleMap!!.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+
         }
         return rootView
     }
