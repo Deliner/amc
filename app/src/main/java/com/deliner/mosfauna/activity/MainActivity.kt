@@ -2,25 +2,24 @@ package com.deliner.mosfauna.activity
 
 import android.content.Intent
 import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Message
-import android.view.Menu
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.fragment.app.Fragment
 import com.deliner.mosfauna.R
 import com.deliner.mosfauna.fragment.GuideFragment
+import com.deliner.mosfauna.fragment.MainFragment
 import com.deliner.mosfauna.fragment.ScoreFragment
 import com.deliner.mosfauna.system.CoreConst
 import com.deliner.mosfauna.utils.LoginManager
 import com.deliner.mosfauna.utils.StaticHandler
 import com.deliner.mosfauna.utils.Utils
+import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome
 import com.mikepenz.iconics.typeface.library.googlematerial.GoogleMaterial
-import com.mikepenz.materialdrawer.iconics.iconicsIcon
 import com.mikepenz.materialdrawer.iconics.withIcon
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem
-import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.*
 import com.mikepenz.materialdrawer.util.addStickyDrawerItems
@@ -54,6 +53,7 @@ class MainActivity : CommonActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar!!.setDisplayHomeAsUpEnabled(false)
         supportActionBar!!.setHomeButtonEnabled(true)
+        supportActionBar!!.title = "ГЛАВНАЯ"
 
         slider = findViewById(R.id.activity_main_drawer)
 
@@ -68,7 +68,7 @@ class MainActivity : CommonActivity() {
 
         initSlider()
 
-        attachFragment(PageTypes.GUIDE)
+        attachFragment(PageTypes.MAIN)
     }
 
     private fun initSlider() {
@@ -97,10 +97,12 @@ class MainActivity : CommonActivity() {
 
         slider.apply {
             itemAdapter.add(
-                PrimaryDrawerItem().withIdentifier(1).withName("Гид")
+                PrimaryDrawerItem().withIdentifier(1).withName("Главная")
                     .withIcon(GoogleMaterial.Icon.gmd_home),
                 PrimaryDrawerItem().withIdentifier(2).withName("Рейтинг")
                     .withIcon(GoogleMaterial.Icon.gmd_show_chart),
+                PrimaryDrawerItem().withIdentifier(3).withName("Книга знаний")
+                    .withIcon(FontAwesome.Icon.faw_book_open)
             )
             addStickyDrawerItems(
                 SecondaryDrawerItem().withName("Cвязаться с разработчиками")
@@ -112,12 +114,17 @@ class MainActivity : CommonActivity() {
         slider.onDrawerItemClickListener = { _, drawerItem, _ ->
             when (drawerItem.identifier) {
                 1L -> {
-                    attachFragment(PageTypes.GUIDE)
-                    supportActionBar!!.title = "ГИД"
+                    attachFragment(PageTypes.MAIN)
+                    supportActionBar!!.title = "ГЛАВНАЯ"
                 }
                 2L -> {
                     attachFragment(PageTypes.SCORE)
                     supportActionBar!!.title = "РЕЙТИНГ"
+                }
+                3L -> {
+                    slider.selectedItemIdentifier = 1
+                    Toast.makeText(applicationContext, "Пока не доступно", Toast.LENGTH_SHORT)
+                        .show()
                 }
                 6L -> Utils.shareTextToEmail(
                     this,
@@ -133,7 +140,7 @@ class MainActivity : CommonActivity() {
     private fun attachFragment(type: PageTypes) {
         if (currentPage != type) {
             val fragment = when (type) {
-                PageTypes.GUIDE -> GuideFragment()
+                PageTypes.MAIN -> MainFragment()
                 PageTypes.SCORE -> ScoreFragment()
             }
             updateFragment(fragment)
@@ -179,7 +186,7 @@ class MainActivity : CommonActivity() {
         }
     }
 
-    private enum class PageTypes { GUIDE, SCORE }
+    private enum class PageTypes { MAIN, SCORE }
 
     companion object {
         private val handler = StaticHandler()

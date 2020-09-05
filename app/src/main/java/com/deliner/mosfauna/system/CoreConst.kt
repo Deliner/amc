@@ -7,4 +7,5 @@ object CoreConst {
 
     const val ON_SEND_MARKER = 4
     const val ON_CANCEL_MARKER = 5
+    const val ON_IMAGE_CLICKED = 6
 }

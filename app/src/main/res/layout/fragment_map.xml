@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.deliner.mosfauna.widget.ClickableImageView
+        android:id="@+id/fragment_map_image_first"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"/>
+
+    <com.deliner.mosfauna.widget.ClickableImageView
+        android:id="@+id/fragment_map_image_second"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"/>
+
+    <com.deliner.mosfauna.widget.ClickableImageView
+        android:id="@+id/fragment_map_image_third"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"/>
+
+    <com.deliner.mosfauna.widget.ClickableImageView
+        android:id="@+id/fragment_map_image_forth"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"/>
+
+    <com.deliner.mosfauna.widget.ClickableImageView
+        android:id="@+id/fragment_map_image_fifth"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"/>
+
+    <com.deliner.mosfauna.widget.ClickableImageView
+        android:id="@+id/fragment_map_image_six"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"/>
+
+    <com.deliner.mosfauna.widget.ClickableImageView
+        android:id="@+id/fragment_map_image_seventh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"/>
+
+    <com.deliner.mosfauna.widget.ClickableImageView
+        android:id="@+id/fragment_map_image_eights"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"/>
+
+    <com.deliner.mosfauna.widget.ClickableImageView
+        android:id="@+id/fragment_map_image_ninth"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"/>
+</RelativeLayout>

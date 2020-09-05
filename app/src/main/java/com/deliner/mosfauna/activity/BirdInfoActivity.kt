@@ -47,15 +47,30 @@ class BirdInfoActivity : UserActivity() {
         actionButton = findViewById(R.id.activity_bird_info_action_button)
         playSongButton = findViewById(R.id.activity_bird_info_play_song_button)
 
-
-
         birdNameView.text = birdName
-//        birdEnglishNameView.text = getEnglishName(birdName)
+        birdEnglishNameView.text = getEnglishName(birdName)
         birdImageView.setImageResource(photoId)
+        birdInfoView.text = getBirdInfo(birdName)
+    }
 
+    private fun getEnglishName(name: String): String {
+        return when (name) {
+            "Обыкновенный гоголь" -> getString(R.string.gog_english)
+            "Ястреб-перепелятник" -> getString(R.string.peperel_english)
+            "Ястреб-тетеревятник" -> getString(R.string.teterev_englis)
+            "Серая неясыть" -> getString(R.string.neyas_english)
+            else -> ""
+        }
+    }
 
-
-
+    private fun getBirdInfo(name: String): String {
+        return when (name) {
+            "Обыкновенный гоголь" -> getString(R.string.gog_info)
+            "Ястреб-перепелятник" -> getString(R.string.peperel_info)
+            "Ястреб-тетеревятник" -> getString(R.string.teterev_info)
+            "Серая неясыть" -> getString(R.string.neyas_info)
+            else -> ""
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
