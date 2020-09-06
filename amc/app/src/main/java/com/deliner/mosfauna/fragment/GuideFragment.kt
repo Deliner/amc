@@ -232,6 +232,7 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback,
 
     override fun onClusterItemClick(item: Bird): Boolean {
         currentBirb = item
+        Toast.makeText(context, "Поставьте маркер, где вы видели животное", Toast.LENGTH_LONG).show()
         return false
     }
 

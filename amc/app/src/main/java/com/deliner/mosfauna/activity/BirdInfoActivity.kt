@@ -1,24 +1,18 @@
 package com.deliner.mosfauna.activity
 
-import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import com.deliner.mosfauna.R
-import com.deliner.mosfauna.utils.LoginManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class BirdInfoActivity : UserActivity() {
 
     private var photoId = -1
 
-
     private lateinit var birdName: String
-
 
     private lateinit var birdImageView: ImageView
     private lateinit var birdNameView: TextView
@@ -27,7 +21,11 @@ class BirdInfoActivity : UserActivity() {
     private lateinit var actionButton: FloatingActionButton
     private lateinit var playSongButton: ImageView
 
-    private val audioPlayer = MediaPlayer()
+    private var infoPlayer: MediaPlayer? = null
+    private var songPlayer: MediaPlayer? = null
+
+    private var songIsPlaying = false
+    private var infoIsPlaying = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +49,67 @@ class BirdInfoActivity : UserActivity() {
         birdEnglishNameView.text = getEnglishName(birdName)
         birdImageView.setImageResource(photoId)
         birdInfoView.text = getBirdInfo(birdName)
+
+
+        playSongButton.setOnClickListener {
+            if (songIsPlaying) {
+                songPlayer!!.stop()
+                songIsPlaying = false
+                songPlayer = null
+                playSongButton.setImageResource(R.drawable.ic_baseline_play)
+            } else {
+                playSongButton.setImageResource(R.drawable.ic_pause)
+                songPlayer = MediaPlayer.create(applicationContext, getSongRaw(birdName))
+                songPlayer!!.setOnCompletionListener {
+                    songPlayer!!.stop()
+                    songIsPlaying = false
+                    songPlayer = null
+                    playSongButton.setImageResource(R.drawable.ic_baseline_play)
+                }
+                songPlayer!!.start()
+                songIsPlaying = true
+            }
+        }
+
+        actionButton.setOnClickListener {
+            if (infoIsPlaying) {
+                infoPlayer!!.stop()
+                infoIsPlaying = false
+                infoPlayer = null
+                actionButton.setImageResource(R.drawable.ic_play)
+            } else {
+                actionButton.setImageResource(R.drawable.ic_pause_action)
+                infoPlayer = MediaPlayer.create(applicationContext, getInfoRaw(birdName))
+                infoPlayer!!.setOnCompletionListener {
+                    infoPlayer!!.stop()
+                    infoIsPlaying = false
+                    infoPlayer = null
+                    playSongButton.setImageResource(R.drawable.ic_play)
+                }
+                infoPlayer!!.start()
+                infoIsPlaying = true
+            }
+        }
+    }
+
+    private fun getSongRaw(name: String): Int {
+        return when (name) {
+            "Обыкновенный гоголь" -> R.raw.gogol
+            "Ястреб-перепелятник" -> R.raw.perepel
+            "Ястреб-тетеревятник" -> R.raw.teterev
+            "Серая неясыть" -> R.raw.neyasyt
+            else -> R.raw.gogol
+        }
+    }
+
+    private fun getInfoRaw(name: String): Int {
+        return when (name) {
+            "Обыкновенный гоголь" -> R.raw.info_gogol
+            "Ястреб-перепелятник" -> R.raw.info_perepel
+            "Ястреб-тетеревятник" -> R.raw.info_teterev
+            "Серая неясыть" -> R.raw.info_neyas
+            else -> R.raw.info_gogol
+        }
     }
 
     private fun getEnglishName(name: String): String {
