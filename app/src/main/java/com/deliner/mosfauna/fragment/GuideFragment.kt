@@ -27,7 +27,13 @@ import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.google.maps.android.ui.IconGenerator
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import kotlinx.coroutines.runBlocking
 import java.util.*
+import kotlin.collections.HashSet
 
 
 class GuideFragment : CommonFragment(), OnMapReadyCallback,
@@ -43,6 +49,10 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback,
 
     private var currentBirb: Bird? = null
     private var clickPos: LatLng? = null
+
+    private val markerSet = HashSet<Marker>()
+
+    private val timer = Timer()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -104,7 +114,6 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback,
             if (currentBirb != null) {
                 clickPos = it
                 showDialogEx(DialogTags.PLACE_MARKER, bundleOf("KEY_NAME" to currentBirb!!.name))
-//                Toast.makeText(context, "ground", Toast.LENGTH_SHORT).show()
             }
         }
         mClusterManager!!.setOnClusterClickListener(this)
@@ -113,8 +122,37 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback,
         mClusterManager!!.setOnClusterItemInfoWindowClickListener(this)
         addItems()
         mClusterManager!!.cluster()
+        timer.schedule(object : TimerTask() {
+            override fun run() {
+                activity!!.runOnUiThread {
+                    markerSet.forEach { it.remove() }
+                    markerSet.clear()
+                    try {
+                        runBlocking {
+                            val result = HttpClient().get<String>(
+                                host = "95.165.151.46",
+                                port = 2378,
+                                path = "/get_markers"
+                            )
+                            if (result.isNotEmpty()) {
+                                markerSet.addAll(result.split("\n").map {
+                                    val name = decodeBirdName(it.split("_")[0])
+                                    val pos = it.split("_")[1]
+                                    val lan = pos.split("x")[0].toDouble()
+                                    val lgt = pos.split("x")[1].toDouble()
+                                    googleMap!!.addMarker(
+                                        MarkerOptions().position(LatLng(lan, lgt)).title(name)
+                                    )
+                                })
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Toast.makeText(context, "Что-то пошло не так", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }, 0, 5000)
     }
-
 
     override fun handleServiceMessage(msg: Message) {
         when (msg.what) {
@@ -128,7 +166,42 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback,
     }
 
     private fun sendMarker(currentBird: Bird, clickPos: LatLng) {
+        val marker = MarkerOptions().position(clickPos).title(currentBird.name)
+        markerSet.add(googleMap!!.addMarker(marker))
 
+        runBlocking {
+            val response = HttpClient().get<HttpResponse>(
+                host = "95.165.151.46",
+                port = 2378,
+                path = "/add_marker_${encodeBirdName(currentBird.name)}_${clickPos.latitude}x${clickPos.longitude}"
+            )
+            if (response.status.isSuccess()) {
+                Toast.makeText(context, "Маркер отправлен", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, "Ошибка отправки маркера", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    }
+
+    private fun encodeBirdName(name: String): String {
+        return when (name) {
+            "Обыкновенный гоголь" -> "1"
+            "Ястреб-перепелятник" -> "2"
+            "Ястреб-тетеревятник" -> "3"
+            "Серая неясыть" -> "4"
+            else -> "5"
+        }
+    }
+
+    private fun decodeBirdName(name: String): String {
+        return when (name) {
+            "1" -> "Обыкновенный гоголь"
+            "2" -> "Ястреб-перепелятник"
+            "3" -> "Ястреб-тетеревятник"
+            "4" -> "Серая неясыть"
+            else -> "Ошибка"
+        }
     }
 
     override fun onCreateDialogEx(tag: String, args: Bundle?): CommonDialogFragment {
@@ -167,7 +240,6 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback,
         intent.putExtra("KEY_BIRD", item.name)
         intent.putExtra("KEY_PHOTO", item.photo)
         startActivity(intent)
-//        Toast.makeText(context, "info", Toast.LENGTH_SHORT).show()
     }
 
     private fun addItems() {
@@ -269,8 +341,7 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback,
             mIconGenerator.setContentView(mImageView)
         }
     }
-
-
+    
     companion object {
         private val handler = StaticHandler()
     }
