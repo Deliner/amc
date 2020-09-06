@@ -11,7 +11,6 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import com.deliner.mosfauna.R
 import com.deliner.mosfauna.activity.BirdInfoActivity
 import com.deliner.mosfauna.dialog.CommonDialogFragment
@@ -48,7 +47,7 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback,
     private var mClusterManager: ClusterManager<Bird>? = null
 
     private var currentBirb: Bird? = null
-    private var clickPos: LatLng? = null
+    private var lastClickPos: LatLng? = null
 
     private val markerSet = HashSet<Marker>()
 
@@ -112,7 +111,7 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback,
         googleMap!!.setOnInfoWindowClickListener(mClusterManager)
         googleMap!!.setOnMapClickListener {
             if (currentBirb != null) {
-                clickPos = it
+                lastClickPos = it
                 showDialogEx(DialogTags.PLACE_MARKER, bundleOf("KEY_NAME" to currentBirb!!.name))
             }
         }
@@ -156,10 +155,10 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback,
 
     override fun handleServiceMessage(msg: Message) {
         when (msg.what) {
-            CoreConst.ON_SEND_MARKER -> sendMarker(currentBirb!!, clickPos!!)
+            CoreConst.ON_SEND_MARKER -> sendMarker(currentBirb!!, lastClickPos!!)
             CoreConst.ON_CANCEL_MARKER -> {
                 currentBirb = null
-                clickPos = null
+                lastClickPos = null
             }
             else -> super.handleServiceMessage(msg)
         }
@@ -180,8 +179,9 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback,
             } else {
                 Toast.makeText(context, "Ошибка отправки маркера", Toast.LENGTH_SHORT).show()
             }
+            currentBirb = null
+            lastClickPos = null
         }
-
     }
 
     private fun encodeBirdName(name: String): String {
@@ -341,7 +341,7 @@ class GuideFragment : CommonFragment(), OnMapReadyCallback,
             mIconGenerator.setContentView(mImageView)
         }
     }
-    
+
     companion object {
         private val handler = StaticHandler()
     }
